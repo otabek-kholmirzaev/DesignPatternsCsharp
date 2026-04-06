@@ -1,31 +1,11 @@
-﻿ParallelEnumerable.Range(0, 1000)
-    .ForAll(_ =>
-    {
-        Singleton singleton = Singleton.Instance;
-    });
+﻿Singleton singleton1 = Singleton.Instance;
+Singleton singleton2 = Singleton.Instance;
 
 sealed class Singleton
 {
-    private static Singleton _instance = default!;
-    private static object _lock = new();
+    private static readonly Lazy<Singleton> _lazyInstance = new(() => new Singleton());
 
-    public static Singleton Instance { 
-        get
-        {
-            if (_instance is null)
-            {
-                lock(_lock)
-                {
-                    if (_instance is null)
-                    {
-                        _instance = new Singleton();
-                    }   
-                }
-            }
-
-            return _instance;
-        }
-    } 
+    public static Singleton Instance => _lazyInstance.Value;
 
     private Singleton()
     {
